@@ -27,6 +27,19 @@ agent(AI) ──► CLI: pcbai.py ──┬─► Bridge  : 在运行中的 Easy
 原因: 该扩展**只在加载那一刻扫描端口, 不会自动重试** —— 所以顺序反了(先开 EDA 再起桥接)就必须手点一次。
 
 
+## 真实案例（`case/`）
+
+`case/` 是一块**真做出来的板子**：90×90mm 四层、双面贴片、172 元件、**DRC 0 违规**、最小钻 0.305mm（免加钱档）。
+
+- **`case/PIPELINE.md`** ★ —— 布线全流程 9 阶段（约束 → 放置 → 自动布线 → 补线 → 铺铜 → DRC 归零 → 可制造性 → Mark 点 → 交付），每阶段写明判据与坑
+- `case/docs/` —— 过程文档：交付总说明、补线流水账、DRC 全量报告、断点续跑
+- `case/layout-scripts/` —— 33 个按阶段精选脚本（放置校验 / A\* / 扇出 / RF / DSN-SES 流水线 / 校验）
+- `case/board_snapshot.json` —— **板子文本快照**：1926 线 / 268 过孔 / 656 焊盘（可 diff、可复算）
+- `case/images/` —— 全板渲染图（顶/底）+ Mark 点实测图
+- `case/deliver/` —— 交付件：Gerber zip、BOM、贴片坐标、装配清单、给贴片厂的工艺要求、换料说明
+
+> ⚠️ 案例含具体产品设计数据；**公开仓库**请自行评估是否保留 `case/`（详见 `case/README.md`）。
+
 ## ★ 换料 / 变更怎么走（别硬闯）
 
 原理图一被动过，PCB 与原理图就会失去同步（DRC 出现 `Netlist Error / Import Changes`，

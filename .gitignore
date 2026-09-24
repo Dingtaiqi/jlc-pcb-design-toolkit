@@ -2,14 +2,14 @@
 __pycache__/
 *.pyc
 _inject_tmp.js
-verify_out.txt
+/verify_out.txt
 live.json
 
 # ---- 运行/取证产生的中间数据 ----
 _*.json
 *.raw.json
-snapshots/
-Export_BOM.xlsx
+/snapshots/
+/Export_BOM.xlsx
 
 # ---- 一次性探针脚本(取证用的 _diag*.js 保留, 其余不入库) ----
 _s*.js
