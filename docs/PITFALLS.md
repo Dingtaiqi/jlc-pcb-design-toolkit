@@ -64,3 +64,16 @@
     是 **12.5pF** ✗, 差点把超规格的料当合格料放行。**必须**抓立创页面结构化字段核验:
     `python pcbai.py lcsc --file page.html --fp SMD3215-2P --need "Load Capacitance=7pF" --need "ESR<=70k"`
     (国际页走 JSON-LD+PropertyValue, 国内页走 __NEXT_DATA__ 的 parameterName/parameterValue, 工具两种都吃)
+
+## 单位与解析
+30. **板子快照是"混合单位"** ★ —— `extract_live.py` 产出的快照里，x/y/线宽/孔径是 **mm**
+    （线宽 0.2553 = 10mil、过孔 0.4064/0.3048 = 16/12mil），但焊盘 `pad`/`hole` 字段保留了 EasyEDA
+    原始的 **mil**（`RECT,31.5,35.4,0`、`ROUND,40.158`）。按单一单位处理会全盘错位
+    （实测：把 mm 当 mil 用 → "既有线中点只有 0.99% 畅通"的假象 ✗）。
+    修法：内部统一 mm，读入时判断数值量级再换算；`tools/pygeom.py` 已处理。
+31. **`getState_*()` 与普通属性不等价** —— 同一次读取：`p.pad` 是**数组** `["RECT",31.5,35.4,0]`，
+    而 `p.getState_Pad()` 返回**逗号串** `"RECT,31.5,35.4,0"`；`p.hole` 是数组，`getState_Hole()` 在某些器件上
+    返回 `undefined`。解析器必须同时吃 JSON 数组和逗号串两种形态，否则通孔焊盘会一个都解析不出来 ✗
+    （实测：孔到孔检查直接漏掉 63 个通孔焊盘）。
+32. **`node --check` 会把"顶层 await"当成语法错误** —— EasyEDA 脚本普遍是顶层 `await`（在 `async` 环境里跑），
+    直接 `node --check` 一定报错 ✗。CI 里的正确做法：临时包一层 `async function __wrap(){ ... }` 再检查。

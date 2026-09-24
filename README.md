@@ -40,6 +40,35 @@ agent(AI) ──► CLI: pcbai.py ──┬─► Bridge  : 在运行中的 Easy
 
 > ⚠️ 案例含具体产品设计数据；**公开仓库**请自行评估是否保留 `case/`（详见 `case/README.md`）。
 
+## 版本路线
+
+| 版本 | 内容 | 状态 |
+|---|---|---|
+| **v0.1** | 工具包主体：几何引擎 + A\*、全量 DRC 导出、只读自检、变更换料(ECO)、交付导出 | ✓ |
+| **v0.2** | **纯 Python 几何引擎** `tools/pygeom.py`：不依赖 EasyEDA/浏览器，直接跑在**板子快照**上，可进 CI | ✓ |
+| **v0.3** | **CI 回归** `.github/workflows/ci.yml`：语法自检 + 单元测试 + 真板快照回归 + CLI 冒烟 | ✓ |
+
+## 测试与 CI
+
+```bash
+python -m unittest discover -s tests -v                     # 13 项：引擎单元测试 + 真板快照回归
+python tools/pygeom.py --report work/board_snapshot.json    # 离线体检：孔距 / 既有线中点 / 悬空端点
+```
+
+真板快照回归要自备快照（**不入库**）：
+
+```bash
+python pcbai.py snap && cp live.json work/board_snapshot.json
+```
+
+它钉住两条不变量，引擎一旦退化成"过度保守"（把合法铜判成冲突）或"过度宽松"就立刻红：
+
+1. **最小孔壁间距 ≥ 0.30 mm**（厂规 0.25mm，留余量）
+2. **既有走线中点 ≥ 99% 畅通**（与"该板 DRC 0 违规"互证）
+
+实测（三套实现互相印证）：既有线中点 **1926/1926 = 100%** ✓、最小孔壁间距 **0.313 mm** ✓、
+通孔焊盘解析 **63 个** ✓ —— 与 JS 引擎、`pcbai.py holes` 的结论完全一致。
+
 ## 全局自动布线（开源 Java 路由器 Freerouting）
 
 工具包不 vendor 这个引擎（**GPL-3.0** 三方二进制：JAR 62MB + JDK 25 约 291MB），而是把集成方式固化下来：

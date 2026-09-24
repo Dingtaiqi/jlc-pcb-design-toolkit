@@ -1,0 +1,98 @@
+name: CI
+
+# v0.3：每次 push / PR 都自动跑
+#  1) 全仓库 Python 语法自检
+#  2) 纯 Python 几何引擎单元测试（v0.2）
+#  3) 真实板快照回归（有快照文件才跑，没有就跳过）
+#  4) JS 语法自检（EasyEDA 脚本含顶层 await，需要包一层 async 才能用 node --check）
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.10", "3.11", "3.12" ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 环境信息
+        run: |
+          python -V
+          node -v || echo "(没有 node)"
+
+      - name: Python 语法自检
+        run: |
+          set -e
+          n=0
+          for f in $(git ls-files '*.py'); do
+            python -m py_compile "$f"
+            n=$((n+1))
+          done
+          echo "已检查 $n 个 Python 文件"
+
+      - name: 单元测试（纯 Python 几何引擎 + 快照回归）
+        run: python -m unittest discover -s tests -v
+
+      - name: JS 语法自检
+        run: |
+          fail=0; n=0
+          for f in $(git ls-files '*.js'); do
+            n=$((n+1))
+            if node --check "$f" >/dev/null 2>&1; then continue; fi
+            # 顶层 await：包一层 async 再检查
+            tmp="$(mktemp /tmp/jschk.XXXXXX.js)"
+            { echo "async function __wrap() {"; cat "$f"; echo "}"; } > "$tmp"
+            if ! node --check "$tmp" >/dev/null 2>&1; then
+              echo "✗ JS 语法错误: $f"; node --check "$tmp" || true; fail=1
+            fi
+            rm -f "$tmp"
+          done
+          echo "已检查 $n 个 JS 文件"
+          exit $fail
+
+  selfcheck:
+    # 工具包自己的"只读自检"需要在 EasyEDA + 桥接环境下跑，CI 里跑不了，
+    # 这里只验证 CLI 能正常加载、命令表完整（不连 EDA）。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: CLI 冒烟测试
+        run: |
+          set -e
+          out="$(python pcbai.py help)"
+          echo "$out"
+          for c in drc snap inv invdiff netlist propsdiff bomdiff lcsc dsn fr ses holes ping selftest watch; do
+            echo "$out" | grep -q "pcbai.py $c" || { echo "命令表缺 $c"; exit 1; }
+          done
+          echo "✓ 命令表完整"
+      - name: 纯 Python 引擎冒烟测试（无快照也要能跑）
+        run: |
+          python tools/pygeom.py --help
+          python - <<'PY'
+          import json, os, sys
+          sys.path.insert(0, 'tools')
+          import pygeom
+          snap = {"lines": [[1, "N", 1, 0, 0, 2.54, 0, 0.254]],
+                  "vias": [[1, "N", 1.27, 0, 0.4064, 0.3048]],
+                  "pads": [["GND", 1, 3.0, 0, "RECT,1.0,1.0,0", "null", "1", 0]]}
+          b = pygeom.Board(snap, clearance=5.0, hole_hh=11.81)
+          assert b.free('N', 1.27, 0.0, 6.0, 1)
+          assert not b.free('N', 3.0, 0.0, 6.0, 1)
+          gap, a, c = b.min_hole_gap()
+          print('冒烟 OK, 最小孔距 %.3f mm' % gap)
+          PY
