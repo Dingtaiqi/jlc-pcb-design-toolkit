@@ -1,3 +1,4 @@
+import os
 # -*- coding: utf-8 -*-
 """把板上走线的线宽恢复成 Freerouting SES 里的原始线宽。
 
@@ -13,7 +14,7 @@
 import io, re, json, sys, collections, urllib.request
 
 BRIDGE = "http://localhost:49620/execute"
-ROOT = r"D:\360Downloads\tourbox\pcb-layout"
+ROOT = os.environ.get("PCB_PROJECT_DIR", os.getcwd())   # 默认当前目录; 可用 PCB_PROJECT_DIR 指定
 LAYER_OF = {"TopLayer": 1, "BottomLayer": 2, "Inner1": 15, "Inner2": 16}
 MM_PER_UNIT = 0.0254 / 1000.0          # SES: 1 unit = 1/1000 mil
 
@@ -102,7 +103,7 @@ return JSON.stringify(o);
 
 
 def main():
-    ses = sys.argv[1] if len(sys.argv) > 1 else r"D:\360Downloads\tourbox\pcb-layout\tools\tourbox4.ses"
+ses = sys.argv[1] if len(sys.argv) > 1 else os.path.join("work", "board.ses")
     apply = "--apply" in sys.argv
     segs = parse_ses(ses)
     per_net = collections.defaultdict(list)

@@ -9,7 +9,7 @@ const MIL = 1 / 0.0254, MM = v => v * MIL;
 const EPS = MM(0.02);                       // 线长 0.02mm -> 视觉上就是一个圆点
 const out = { created: [], skipped: [], errors: [] };
 
-const POS = [[42.5, 38.3], [62.0, 54.8], [35.0, 14.3]];
+const POS = [[42.5, 38.3], [62.0, 54.8], [35.0, 14.3]];   // ★示例坐标: 换成你板上扫描出来的位置
 const SPEC = [
   ['topCu', 1, 1.0], ['topMask', 5, 2.0],
   ['botCu', 2, 1.0], ['botMask', 6, 2.0]

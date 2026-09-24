@@ -60,7 +60,7 @@
 28. **DRC 里的 `Netlist Error / Import Changes`(无坐标, id=err0/1/2)** = PCB 与原理图不同步,
     不是制造缺陷, 但也**绝不能**算进"0 违规"。处理流程见 `docs/ECO_CHANGE.md`;
     报数时必须写清"0 条布线违规 + N 条同步提示"。
-29. **不许靠型号字母猜规格** ★ —— 我按"FC-135R 的 R 就是 7pF"推断, 实测该料(Q13FC13500004/C32346)
+29. **不许靠型号字母猜规格** ★ —— 我按"FC-135R 的 R 就是 7pF"推断, 实测该料(<原选型MPN>/<原料号>)
     是 **12.5pF** ✗, 差点把超规格的料当合格料放行。**必须**抓立创页面结构化字段核验:
     `python pcbai.py lcsc --file page.html --fp SMD3215-2P --need "Load Capacitance=7pF" --need "ESR<=70k"`
     (国际页走 JSON-LD+PropertyValue, 国内页走 __NEXT_DATA__ 的 parameterName/parameterValue, 工具两种都吃)

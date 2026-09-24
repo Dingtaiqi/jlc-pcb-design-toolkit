@@ -5,7 +5,7 @@
 const out = {};
 
 // ---- 1) 单层 A* 布线 ----
-const NET = '$1N19139', W = 5, LAYER = 1;
+const NET = '某 BGA 网络', W = 5, LAYER = 1;
 const S = [2317.56, 1200.0], T = [2519.69, 1230.31];
 const box = [Math.min(S[0],T[0])-40, Math.min(S[1],T[1])-40, Math.max(S[0],T[0])+40, Math.max(S[1],T[1])+40];
 const G = await Geometry.build({ box: box, margin: 60, clearance: 6, holeHH: 11.81 });

@@ -467,7 +467,7 @@ def render_text(payload, limit, probe, stream):
         stream.write(s + "\n")
 
     p("=" * w)
-    p("EasyEDA Pro 全量 DRC 导出 -- tourbox eltie  PCB %s" % PCB_UUID)
+    p("EasyEDA Pro 全量 DRC 导出 -- PCB %s" % PCB_UUID)
     p("=" * w)
     p("生成时间    : %s" % payload["generated_at"])
     p("API         : %s" % payload["board"]["api"])
@@ -733,7 +733,7 @@ def main(argv=None):
         "schema": "drc_full/1",
         "generated_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "board": {
-            "project": "tourbox eltie",
+            "project": "PCB",
             "pcb_uuid": PCB_UUID,
             "api": (("RECOVERED page cache %s (非本次实测)" % recovered) if recovered
                     else API_SIG.format(strict=str(bool(args.strict)).lower())),

@@ -1,9 +1,10 @@
+import os
 # -*- coding: utf-8 -*-
 """SES 独立几何预检：线-线 / 线-过孔（异网，同层）间距 < 阈值 的对数"""
 import io, re, math, sys, collections
 from shapely.geometry import LineString, Point
 from shapely.strtree import STRtree
-SES = sys.argv[1] if len(sys.argv) > 1 else 'tools/tourbox9.ses'
+SES = sys.argv[1] if len(sys.argv) > 1 else os.path.join('work', 'board.ses')
 TH = 0.152
 U = 0.0254/1000.0
 s = io.open(SES, encoding='utf-8', errors='replace').read()

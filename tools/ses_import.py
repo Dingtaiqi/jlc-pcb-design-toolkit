@@ -3,8 +3,8 @@
 import json, io, urllib.request, time, sys, os
 
 BRIDGE = "http://localhost:49620/execute"
-# 用法: python ses_import.py [D:\...\tools\tourbox5.ses]  （缺省 = tourbox4.ses，兼容旧调用）
-SES_PATH = sys.argv[1] if len(sys.argv) > 1 else r"D:\360Downloads\tourbox\pcb-layout\tools\tourbox4.ses"
+# 用法: python ses_import.py [work/board.ses]   （缺省 = work/board.ses）
+SES_PATH = sys.argv[1] if len(sys.argv) > 1 else os.path.join("work", "board.ses")
 SES_NAME = os.path.basename(SES_PATH)
 
 
