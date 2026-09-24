@@ -1,0 +1,7 @@
+# 统一换行符, 避免 Windows 上 checkout 出一堆 CRLF 噪音
+* text=auto
+*.py text eol=lf
+*.js text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.cmd text eol=crlf
