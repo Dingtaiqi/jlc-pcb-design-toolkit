@@ -361,6 +361,8 @@ class Board:
         """全板最小孔壁间距（过孔 + 通孔焊盘；暴力全对全）"""
         holes = [(v.x, v.y, v.drill_r * 2) for v in self.vias]
         holes += [(p.x, p.y, p.hole_r * 2) for p in self.pads if p.hole_r > 0]
+        if len(holes) < 2:
+            return None, None, None          # ★不用哨兵值(哨兵值会伪装成"真结果")
         best = (1e18, None, None)
         for i in range(len(holes)):
             xi, yi, di = holes[i]

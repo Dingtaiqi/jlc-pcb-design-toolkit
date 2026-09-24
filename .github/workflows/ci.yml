@@ -94,5 +94,5 @@ jobs:
           assert b.free('N', 1.27, 0.0, 6.0, 1)
           assert not b.free('N', 3.0, 0.0, 6.0, 1)
           gap, a, c = b.min_hole_gap()
-          print('冒烟 OK, 最小孔距 %.3f mm' % gap)
+          print('冒烟 OK, 最小孔距 =', ('%.3f mm' % gap) if gap is not None else '孔数不足(未计算)')
           PY

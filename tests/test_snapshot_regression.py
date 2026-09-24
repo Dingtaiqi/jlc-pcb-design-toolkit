@@ -38,6 +38,7 @@ class TestSnapshotRegression(unittest.TestCase):
     def test_min_hole_gap_meets_fab(self):
         """孔壁最小间距 >= 0.30mm（厂规 0.25mm）"""
         gap, a, c = self.b.min_hole_gap()
+        self.assertIsNotNone(gap, '至少要解析出 2 个孔')
         print('  最小孔壁间距: %.3f mm (%.2f mil)' % (gap, gap * pygeom.MIL_PER_MM))
         self.assertGreaterEqual(gap, 0.30,
                                 '孔距不足 0.30mm: 最紧一处 %s ↔ %s' % (a, c))
