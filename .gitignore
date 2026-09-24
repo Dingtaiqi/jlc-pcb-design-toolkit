@@ -1,0 +1,46 @@
+# ---- 本地运行产物(不入库) ----
+__pycache__/
+*.pyc
+_inject_tmp.js
+verify_out.txt
+live.json
+
+# ---- 运行/取证产生的中间数据 ----
+_*.json
+*.raw.json
+snapshots/
+Export_BOM.xlsx
+
+# ---- 一次性探针脚本(取证用的 _diag*.js 保留, 其余不入库) ----
+_s*.js
+_probe*.js
+_near_fid.js
+_inspect_fid.js
+_move_mark.js
+_check_markpad.js
+_sch_*.js
+_syncdiff.js
+_nets_diff.py
+_sch_nets.py
+_netnames.py
+_values_*.py
+_bom_values_diff.py
+_netlist_*.py
+_pcb_inventory.py
+_inventory_diff.py
+_netlist_diff.py
+_bom_diff.json
+_netlist_diff.json
+_props_diff.json
+
+# ---- 工程私密数据: 别人的板子/网表不要跟着工具包外流 ----
+design/Net_List.enet
+
+# ---- 系统杂物 ----
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 一次性探针(不保留)
+_ping.js
+_vprobe.js
