@@ -40,6 +40,21 @@ agent(AI) ──► CLI: pcbai.py ──┬─► Bridge  : 在运行中的 Easy
 
 > ⚠️ 案例含具体产品设计数据；**公开仓库**请自行评估是否保留 `case/`（详见 `case/README.md`）。
 
+## 全局自动布线（开源 Java 路由器 Freerouting）
+
+工具包不 vendor 这个引擎（**GPL-3.0** 三方二进制：JAR 62MB + JDK 25 约 291MB），而是把集成方式固化下来：
+
+```bash
+python pcbai.py fr check                    # 查 java / jar（会自动认出你本机那套）
+python pcbai.py fr install --proxy http://127.0.0.1:7890   # 按需下载 jar 到 tools/freerouting/
+python pcbai.py dsn --out work/board.dsn    # ① 导出 Specctra DSN（★自动补层名，否则 FR 丢掉已有铜）
+python pcbai.py fr run --dsn work/board.dsn --ses work/board.ses --passes 30 --oi 0.25 --poll
+python pcbai.py ses work/board.ses          # ③ 回写 SES（之后必须 fix_layers + restore_widths）
+```
+
+完整手册（FR 参数表、EasyEDA 侧 DSN/SES 的 7 个已知缺陷与修法、孔到孔需单独复核、验证闭环）：
+**`docs/FREEROUTING.md`**。
+
 ## ★ 换料 / 变更怎么走（别硬闯）
 
 原理图一被动过，PCB 与原理图就会失去同步（DRC 出现 `Netlist Error / Import Changes`，

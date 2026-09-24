@@ -44,3 +44,7 @@ desktop.ini
 # 一次性探针(不保留)
 _ping.js
 _vprobe.js
+
+# Freerouting 本地缓存(GPL 三方二进制, 不入库)
+tools/freerouting/
+work/

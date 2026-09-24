@@ -19,6 +19,9 @@
   python pcbai.py bomdiff [A] [B]     BOM 单元格级 diff(换料说明就用它)
   python pcbai.py lcsc --file x.html  立创页面规格核验(CL/ESR/封装/价格/库存)
   python pcbai.py lcsc --url <url> --fp SMD3215-2P --need "Load Capacitance=7pF"
+  python pcbai.py dsn [--out work/board.dsn]   导出 Specctra DSN(自动补层名) 给 Freerouting
+  python pcbai.py fr check|install|run ...     开源 Java 自动布线器 Freerouting 检查/安装/运行
+  python pcbai.py ses <file.ses>               回写 SES 到 PCB(之后必须 fix_layers + restore_widths)
   python pcbai.py watch [--once]      桥接看门狗: 桥接死了自动拉起, EDA 没连会提示你去点重连
   python pcbai.py help
 
@@ -82,6 +85,9 @@ def main():
     if c == 'propsdiff':return run(os.path.join(T, 'netlist_props_diff.py'), *rest)
     if c == 'bomdiff':  return run(os.path.join(T, 'bom_diff.py'), *rest)
     if c == 'lcsc':     return run(os.path.join(T, 'lcsc_verify.py'), *rest)
+    if c == 'dsn':      return run(os.path.join(T, 'dsn_export.py'), *rest)
+    if c == 'fr':       return run(os.path.join(T, 'freerouting.py'), *rest)
+    if c == 'ses':      return run(os.path.join(T, 'ses_import.py'), *rest)
 
     print('未知命令:', c)
     print(__doc__)

@@ -37,11 +37,14 @@ dist = Math.hypot(Math.max(qx,0), Math.max(qy,0)) + Math.min(Math.max(qx,qy), 0)
 
 ## 阶段 2 · 全局自动布线（Freerouting 流水线）
 
-1. **导出 DSN**：这一环节本身有 3 个缺陷，必须先修好再喂给布线器：
-   - 数值层号会**丢 319 条线** → 改成层名
+1. **导出 DSN**（`python pcbai.py dsn`）：这一环节本身有缺陷，必须先修好再喂给布线器：
+   - ★ 走线写的是 `(path 1 …)`/`(path 2 …)`，而头部声明的层名是 `TopLayer/BottomLayer`
+     → Freerouting 找不到层名，会把**已有铜全部丢掉**（等于从头布）；导出器自动补成层名
+     （早先按数值层号硬喂的那一版，直接丢了 319 条线）
    - 板框退化成 5–6 点自交多边形 → 补点重排
    - **完全没有禁布区** → 手动把挖空/净空写进 DSN
-2. **跑 Freerouting**：`tools/freerouting-2.4.1.jar` + JDK
+2. **跑 Freerouting**（`python pcbai.py fr run --dsn … --ses … --passes 30 --oi 0.25 --poll`）：
+   `freerouting-2.4.1.jar`(62MB, GPL-3.0, 用 `pcbai.py fr install` 按需下载) + JDK 25
    `-de in.dsn -do out.ses -mp 40 -oit 0.25`
    > 坑：必须用 `Start-Process` 起；当后台任务起会被中断。FR **不检查孔到孔**。
 3. **导入 SES**：导入器有 4 个坑，导入后必须依次补：
@@ -51,6 +54,8 @@ dist = Math.hypot(Math.max(qx,0), Math.max(qy,0)) + Math.min(Math.max(qx,qy), 0)
    - 新图元不会自动进连通图 → `sync_current_document`（一次同步把 519 条悬空降到 37 条）
 
 > 判据：**导入后立刻重跑 DRC**，违规数只能降不能升；升了说明导入器又坑你了。
+
+> 完整手册（参数表 / 导入器四个坑 / 验证闭环 / 许可证注意）见 **`../docs/FREEROUTING.md`**。
 
 ## 阶段 3 · 补线（A\* + 分阶段推进）
 
