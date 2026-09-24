@@ -103,7 +103,7 @@ return JSON.stringify(o);
 
 
 def main():
-ses = sys.argv[1] if len(sys.argv) > 1 else os.path.join("work", "board.ses")
+    ses = sys.argv[1] if len(sys.argv) > 1 else os.path.join("work", "board.ses")
     apply = "--apply" in sys.argv
     segs = parse_ses(ses)
     per_net = collections.defaultdict(list)
